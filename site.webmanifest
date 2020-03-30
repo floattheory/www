@@ -1,0 +1,12 @@
+{
+  "short_name": "Float Theory",
+  "name": "Float Theroy",
+  "icons": [{
+    "src": "icon.png",
+    "type": "image/png",
+    "sizes": "android-icon-192x192.png"
+  }],
+  "start_url": "/?utm_source=homescreen",
+  "background_color": "#000000",
+  "theme_color": "#2d2d2d"
+}
