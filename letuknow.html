@@ -863,9 +863,11 @@ s.setAttribute('data-timestamp', +new Date());
     <section class="oneMusic-buy-now-area has-fluid bg-gray section-padding-100" bg-img bg-overlay bg-fixed" style="background-image: url(https://res.cloudinary.com/oaxai/image/upload/fl_lossy,q_53/v1588987810/let_you_know-single_cl6xur.webp); background-repeat: no-repeat; background-size: 100% 100%, cover;">
         <div class="container-fluid-video"><center><h4>Let You Know 3rd Verse Competition</h4></center><br>
 		<center>
-					  <div id="filesubmit">
-  <input type="file" class="file-select" accept=".wav"/>
-  <button class="file-submit">SUBMIT</button>
+<div id="filesubmit">
+<input type=".wav" id="files" multiple /><br /><br />
+<button id="send">Submit</button>
+<p id="uploading"></p>
+<progress value="0" max="100" id="progress"></progress>
 </div>
 			     </center>
     </section>
@@ -898,31 +900,71 @@ s.setAttribute('data-timestamp', +new Date());
     measurementId: "G-3SN291JX55"
   };
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  document.querySelector('.file-select).addEventListener('change', handleFileUploadChange);
-  document.querySelector('.file-submit).addEventListener('click', handleFileUploadSubmit);
-				 
-  let selectedFile;
-  handleFileUploadChange(e) {
-  selectedFile = e.target.files[0];
-  }
-				 
-  handleFileUploadSubmit(e) {
-  const uploadTask = storageRef.child(`letuknow/${selectedFile.name}`).put(selectedFile); //create a child directory called images, and place the file inside this directory
-  uploadTask.on('state_changed', (snapshot) => {
-  // Observe state change events such as progress, pause, and resume
-  }, (error) => {
-    // Handle unsuccessful uploads
-    console.log(error);
-  }, () => {
-     // Do something once upload is complete
-     console.log('success');
-  });
-}
-				 
+  firebase.initializeApp(firebaseConfig);				 
   const storageService = firebase.storage();
   const storageRef = storageService.ref();
   firebase.analytics();		 		 
+</script>
+				 
+<script>
+var files = [];
+document.getElementById("files").addEventListener("change", function(e) {
+  files = e.target.files;
+  for (let i = 0; i < files.length; i++) {
+    console.log(files[i]);
+  }
+});
+
+document.getElementById("send").addEventListener("click", function() {
+  //checks if files are selected
+  if (files.length != 0) {
+    //Loops through all the selected files
+    for (let i = 0; i < files.length; i++) {
+      //create a storage reference
+      var storage = firebase.storage().ref(files[i].name);
+
+      //upload file
+      var upload = storage.put(files[i]);
+
+      //update progress bar
+      upload.on(
+        "state_changed",
+        function progress(snapshot) {
+          var percentage =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          document.getElementById("progress").value = percentage;
+        },
+
+        function error() {
+          alert("error uploading file");
+        },
+
+        function complete() {
+          document.getElementById(
+            "uploading"
+          ).innerHTML += `${files[i].name} upoaded <br />`;
+        }
+      );
+    }
+  } else {
+    alert("No file chosen");
+  }
+});
+
+function getFileUrl(filename) {
+  //create a storage reference
+  var storage = firebase.storage().ref(filename);
+
+  //get file url
+  storage
+    .getDownloadURL()
+    .then(function(url) {
+      console.log(url);
+    })
+    .catch(function(error) {
+      console.log("error encountered");
+    });
+}
 </script>
 </body>
 </html>
