@@ -864,14 +864,19 @@ s.setAttribute('data-timestamp', +new Date());
         <div class="container-fluid-video"><center><h4>Let You Know 3rd Verse Competition</h4></center><br>
 		<center>
 <div id="filesubmit">
-<input type="file" id="files" multiple /><button id="send">Submit</button>
-<p id="uploading"></p>
+<input type="file" class="js-fileElem" multiple accept=".wav" style="display:none">
+    <a href="#" class="js-fileSelect">Submit your vocals</a>
 <progress value="0" max="100" id="progress"></progress>
 </div>
 			     </center>
     </section>
 
-
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
+     <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577172194/floattheory/js/jquery/jquery-2.2.4.min.js"></script>
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577172166/floattheory/js/bootstrap/popper.min.js"></script>
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577172166/floattheory/js/bootstrap/bootstrap.min.js"></script>
@@ -879,12 +884,7 @@ s.setAttribute('data-timestamp', +new Date());
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577172135/floattheory/js/active.js"></script>
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577216664/floattheory/js/smooth.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/cookie-bar/cookiebar-latest.min.js?tracking=1&thirdparty=1&always=1&scrolling=1"></script>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
-     <!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
+
 
 <script>
   // Your web app's Firebase configuration
@@ -900,70 +900,66 @@ s.setAttribute('data-timestamp', +new Date());
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);				 
-  const storageService = firebase.storage();
-  const storageRef = storageService.ref();
-  firebase.analytics();		 		 
+
+          // Get a reference to the storage service, which is used to create references in your storage bucket
+        const storage = firebase.storage();
+
+        // Create a storage reference from our storage service
+        const storageRef = storage.ref();
+        
+        // Create a child reference
+        const imagesRef = storageRef.child('letuknow');
+        // imagesRef now points to 'images'
+
+        // Create a ref to a file - space.jpg
+        const spaceRef = imagesRef.child('letyouknow.wav');
+        // ^^^ now you should have a "path" in your firebase storage that looks like: 'images/space.jpg'
+
+        // select anchor tag and file input
+        const fileSelect = document.querySelector('.js-fileSelect');
+        const fileElem = document.querySelector('.js-fileElem');
+
+        // click handler for fileElem
+        fileSelect.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // trigger click on input type="file"
+            // this will call the change event defined below
+            if (fileElem) {
+                fileElem.click();
+            }
+        });
+
+        // change handler for fileSelect
+        fileElem.addEventListener('change', (e) => {
+            // e.target.files contains File object references
+            // to all chosen items by user
+            console.log(e.target.files);
+
+            /* ADDED THESE LINES */
+            // since e.target.files is "array-like", we turn it into an array
+            // then map it to the .put() method from Firebase, which returns promises...
+            const fileUploads = Array.from(e.target.files).map((currFile) => {
+                // we store the name of the file as a storage ref
+                const fileRef = imagesRef.child(currFile.name);
+                // we return a promise where we first "put" or upload the file
+                // and then once the upload is complete, we return promise with
+                // download URL string of the file we uploaded
+                return fileRef.put(currFile).then((snapshot) => snapshot.downloadURL);
+            });
+
+            // once ALL the promises have been resolved
+            // we console.log the urls...but we can do whatever we need to with this data 
+            // from here
+            Promise.all(fileUploads).then((items) => {
+                console.log(items);
+            });
+            /* END ADDED THESE LINES */
+        });
+      })();
+      
 </script>
 				 
-<script>
-var files = [];
-document.getElementById("files").addEventListener("change", function(e) {
-  files = e.target.files;
-  for (let i = 0; i < files.length; i++) {
-    console.log(files[i]);
-  }
-});
 
-document.getElementById("send").addEventListener("click", function() {
-  //checks if files are selected
-  if (files.length != 0) {
-    //Loops through all the selected files
-    for (let i = 0; i < files.length; i++) {
-      //create a storage reference
-      var storage = firebase.storage().ref(letuknow[i].name);
-
-      //upload file
-      var upload = storage.put(letuknow[i]);
-
-      //update progress bar
-      upload.on(
-        "state_changed",
-        function progress(snapshot) {
-          var percentage =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          document.getElementById("progress").value = percentage;
-        },
-
-        function error() {
-          alert("error uploading file");
-        },
-
-        function complete() {
-          document.getElementById(
-            "uploading"
-          ).innerHTML += `${files[i].name} uploaded <br />`;
-        }
-      );
-    }
-  } else {
-    alert("No file chosen");
-  }
-});
-
-function getFileUrl(filename) {
-  //create a storage reference
-  var storage = firebase.storage().ref(filename);
-
-  //get file url
-  storage
-    .getDownloadURL()
-    .then(function(url) {
-      console.log(url);
-    })
-    .catch(function(error) {
-      console.log("error encountered");
-    });
-}
-</script>
 </body>
 </html>
