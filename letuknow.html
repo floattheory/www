@@ -920,7 +920,7 @@ document.getElementById("send").addEventListener("click", function() {
     //Loops through all the selected files
     for (let i = 0; i < files.length; i++) {
       //create a storage reference
-      var storage = firebase.storage().ref(files[i].name);
+      var storage = firebase.storage().ref(letuknow[i].name);
 
       //upload file
       var upload = storage.put(files[i]);
@@ -941,7 +941,7 @@ document.getElementById("send").addEventListener("click", function() {
         function complete() {
           document.getElementById(
             "uploading"
-          ).innerHTML += `${files[i].name} upoaded <br />`;
+          ).innerHTML += `${files[i].name} uploaded <br />`;
         }
       );
     }
