@@ -883,6 +883,7 @@ s.setAttribute('data-timestamp', +new Date());
      <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
 
 <script>
   // Your web app's Firebase configuration
@@ -898,10 +899,6 @@ s.setAttribute('data-timestamp', +new Date());
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  const storageService = firebase.storage();
-  const storageRef = storageService.ref();
-  firebase.analytics();
-				 
   document.querySelector('.file-select).addEventListener('change', handleFileUploadChange);
   document.querySelector('.file-submit).addEventListener('click', handleFileUploadSubmit);
 				 
@@ -923,8 +920,9 @@ s.setAttribute('data-timestamp', +new Date());
   });
 }
 				 
-  
-				 
+  const storageService = firebase.storage();
+  const storageRef = storageService.ref();
+  firebase.analytics();		 		 
 </script>
 </body>
 </html>
