@@ -861,13 +861,13 @@ s.setAttribute('data-timestamp', +new Date());
         </div>
     </header>
     <section class="oneMusic-buy-now-area has-fluid bg-gray section-padding-100" bg-img bg-overlay bg-fixed" style="background-image: url(https://res.cloudinary.com/oaxai/image/upload/c_scale,q_51,w_1920/v1585289506/couple-1375125_aqjh1u.webp); background-repeat: no-repeat; background-size: 100% 100%, cover;">
-        <div class="container-fluid-video"><center><h4>All I Want</h4></center><br>
-			    <div class="egypt-video">
-		            	<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/yqxSQHFq3H4?controls=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-			    </div>
-			    <br>
-			    <center><a href="https://open.spotify.com/album/0yzLLHf6WIho5qpvNaks1t" target="_blank"><img src="https://res.cloudinary.com/oaxai/image/upload/c_scale,f_webp,fl_lossy,w_200/v1587014639/358-3589533_available-on-spotify-png-listen-now-on-spotify_cw9djw.webp" border="0"></a>    <a href="https://music.apple.com/us/album/all-i-want-single/1505962369?app=music&ign-mpt=uo%3D4" target="_blank"><img src="https://res.cloudinary.com/oaxai/image/upload/c_scale,f_webp,fl_lossy,w_210/v1587014638/grayson-erhard-listen-on-apple-music-badge_eizw53.webp" border="0"></center>
-        </div>
+        <div class="container-fluid-video"><center><h4>Let You Know 3rd Verse Competition</h4></center><br>
+		<center>
+					  <div id="filesubmit">
+  <input type="file" class="file-select" accept=".wav"/>
+  <button class="file-submit">SUBMIT</button>
+</div>
+			     </center>
     </section>
 
 
@@ -878,5 +878,53 @@ s.setAttribute('data-timestamp', +new Date());
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577172135/floattheory/js/active.js"></script>
     <script src="https://res.cloudinary.com/rightpeer/raw/upload/v1577216664/floattheory/js/smooth.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/cookie-bar/cookiebar-latest.min.js?tracking=1&thirdparty=1&always=1&scrolling=1"></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
+     <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyANhjStdnQxdirNkta__P3OZVDCttOkrVg",
+    authDomain: "floattheory-37c0c.firebaseapp.com",
+    databaseURL: "https://floattheory-37c0c.firebaseio.com",
+    projectId: "floattheory-37c0c",
+    storageBucket: "floattheory-37c0c.appspot.com",
+    messagingSenderId: "374549910361",
+    appId: "1:374549910361:web:3546a0e8e8d2e0e76e7248",
+    measurementId: "G-3SN291JX55"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const storageService = firebase.storage();
+  const storageRef = storageService.ref();
+  firebase.analytics();
+				 
+  document.querySelector('.file-select).addEventListener('change', handleFileUploadChange);
+  document.querySelector('.file-submit).addEventListener('click', handleFileUploadSubmit);
+				 
+  let selectedFile;
+  handleFileUploadChange(e) {
+  selectedFile = e.target.files[0];
+  }
+				 
+  handleFileUploadSubmit(e) {
+  const uploadTask = storageRef.child(`images/${selectedFile.name}`).put(selectedFile); //create a child directory called images, and place the file inside this directory
+  uploadTask.on('state_changed', (snapshot) => {
+  // Observe state change events such as progress, pause, and resume
+  }, (error) => {
+    // Handle unsuccessful uploads
+    console.log(error);
+  }, () => {
+     // Do something once upload is complete
+     console.log('success');
+  });
+}
+				 
+  
+				 
+</script>
 </body>
 </html>
