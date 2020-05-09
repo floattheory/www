@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
 html { 
-  background: url() no-repeat center center fixed; 
+  background-color: #000000; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -923,7 +923,7 @@ document.getElementById("send").addEventListener("click", function() {
       var storage = firebase.storage().ref(letuknow[i].name);
 
       //upload file
-      var upload = storage.put(files[i]);
+      var upload = storage.put(letuknow[i]);
 
       //update progress bar
       upload.on(
